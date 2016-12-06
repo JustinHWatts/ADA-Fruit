@@ -1,0 +1,69 @@
+V "GNAT Lib v2015"
+A -gnatwu
+A -gnat05
+A -gnatc
+A -mtune=generic
+A -march=pentiumpro
+P NO ZX
+
+RN
+RV NO_IO
+RV NO_ELABORATION_CODE
+RV SPARK_05
+
+U fruit_pkg%s		fruit_pkg.ads		5912a4d9 EE OO PK
+W ada%s			ada.ads			ada.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W ada.text_io.enumeration_io%s
+
+D ada.ads		20150518132148 3ffc8e18 ada%s
+D a-ioexce.ads		20150518132148 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20150518132148 119b8fb3 ada.streams%s
+D a-textio.ads		20150518132148 386df5d4 ada.text_io%s
+D a-tienio.ads		20150518132148 fc618ae6 ada.text_io.enumeration_io%s
+D fruit_pkg.ads		20151110034946 617f510d fruit_pkg%s
+D interfac.ads		20150518132148 6033a23f interfaces%s
+D i-cstrea.ads		20150518132148 e53d8b8e interfaces.c_streams%s
+D system.ads		20150518132150 f4ce8c3a system%s
+D s-crtl.ads		20150518132148 0ebbdb71 system.crtl%s
+D s-ficobl.ads		20150518132148 078245e4 system.file_control_block%s
+D s-parame.ads		20150518132150 7e2a0d7f system.parameters%s
+D s-wchcon.ads		20150518132150 1b7d22d2 system.wch_con%s
+X 1 ada.ads
+16K9*Ada 19e8 6|1r6 1r23 9r27 10r31 11r28
+X 4 a-textio.ads
+49K13*Text_IO 471e16 6|1w10 1r27 9r31 10r35 11r32
+X 5 a-tienio.ads
+26k21*Enumeration_IO 55e31 6|9r39 10r43 11r40
+X 6 fruit_pkg.ads
+2K9*Fruit_Pkg 21E9 27l5 27e14
+3R9*Fruit_Type 13r77 15r28 16r32 17r29 21c9 25e14
+5E9*Size_Type 5e45 9r54 13r26 15r47 22r13
+5n23*small{5E9}
+5n30*midsize{5E9}
+5n39*large{5E9}
+6E9*Firmness_Type 6e44 10r58 13r40 16r51 23r17
+6n27*soft{6E9}
+6n33*firm{6E9}
+6n39*hard{6E9}
+7E9*Taste_Type 7e43 11r55 13r58 17r48 24r14
+7n24*bland{7E9}
+7n31*sweet{7E9}
+7n38*sour{7E9}
+9K12*Size_IO[5|26]
+10K12*Firmness_IO[5|26]
+11K12*Taste_IO[5|26]
+13V13*new_fruit{3R9} 13>23 13>37 13>55
+13e23 s{5E9}
+13e37 f{6E9}
+13e55 t{7E9}
+15V13*get_Size{5E9} 15>22
+15r22 item{3R9}
+16V13*get_Firmness{6E9} 16>26
+16r26 item{3R9}
+17V13*get_Taste{7E9} 17>23
+17r23 item{3R9}
+22e7*Size{5E9}
+23e7*Firmness{6E9}
+24e7*Taste{7E9}
+

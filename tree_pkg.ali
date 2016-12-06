@@ -1,0 +1,90 @@
+V "GNAT Lib v2015"
+A -gnatwu
+A -gnat05
+A -gnatc
+A -mtune=generic
+A -march=pentiumpro
+P NO ZX
+
+RN
+RV NO_FLOATING_POINT
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_ELABORATION_CODE
+RV SPARK_05
+
+U tree_pkg%s		tree_pkg.ads		42c9a152 EE OO PK GE
+W fruit_pkg%s		fruit_pkg.ads		fruit_pkg.ali
+
+D ada.ads		20150518132148 3ffc8e18 ada%s
+D a-ioexce.ads		20150518132148 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20150518132148 119b8fb3 ada.streams%s
+D a-textio.ads		20150518132148 386df5d4 ada.text_io%s
+D a-tienio.ads		20150518132148 fc618ae6 ada.text_io.enumeration_io%s
+D fruit_pkg.ads		20151110034946 617f510d fruit_pkg%s
+D interfac.ads		20150518132148 6033a23f interfaces%s
+D i-cstrea.ads		20150518132148 e53d8b8e interfaces.c_streams%s
+D system.ads		20150518132150 f4ce8c3a system%s
+D s-crtl.ads		20150518132148 0ebbdb71 system.crtl%s
+D s-ficobl.ads		20150518132148 078245e4 system.file_control_block%s
+D s-parame.ads		20150518132150 7e2a0d7f system.parameters%s
+D s-wchcon.ads		20150518132150 1b7d22d2 system.wch_con%s
+D tree_pkg.ads		20151110201338 23b6f05f tree_pkg%s
+X 6 fruit_pkg.ads
+2K9*Fruit_Pkg 27e14 14|3w6 3r21
+3R9*Fruit_Type 25e14 14|75r55
+X 14 tree_pkg.ads
+6i4 Max_Tree_Count{positive} 22r50 23r50
+7i4 Max_Fruit_Count{positive} 27r51 28r51
+8k9*Tree_Pkg 6z4 7z4 72E4 86l5 86e13
+10X4*Invalid_Index
+10X19*Invalid_ID
+13R9*Tree_Type 41r78 45r67 55r23 56r32 57r37 59r33 60r37 61r34 63r44 64r48
+. 65r45 77c9 83e14 85r53
+14A9*ID_Type<string> 33r51 45r51 55r41 73c9 78r11
+16F12*Average_Type{float} 59r51 60r55 61r52 81r16
+18F12*Standard_Deviation_Type{float} 63r62 64r66 65r63 82r15
+21A9*Tree_List_Type(13R9) 33r31 35r31 38r37 41r31 45r31 85c9
+22I12*Tree_Count_Type{natural} 38r60
+23I12*Tree_Index_Type{natural} 35r54 41r54 85r33
+26A9*Fruit_List_Type(6|3R9) 57r55 75c9 80r19
+27I12*Fruit_Count_Type{natural} 56r50 79r20
+28I12*Fruit_Index_Type{natural} 75r34
+33V13*Is_Valid{boolean} 33>22 33>47
+33a22 List{21A9}
+33a47 Id{14A9}
+35V13*Is_Valid{boolean} 35>22 35>47
+35a22 List{21A9}
+35i47 Index{23I12}
+38V13*Get_Tree_Count{22I12} 38>28
+38a28 List{21A9}
+41V13*Get_Tree{13R9} 41>22 41>47
+41a22 List{21A9}
+41i47 Index{23I12}
+45V13*Get_Tree{13R9} 45>22 45>47
+45a22 List{21A9}
+45a47 Id{14A9}
+55V13*get_ID{14A9} 55>20
+55r20 t{13R9}
+56V13*get_Fruit_Count{27I12} 56>29
+56r29 t{13R9}
+57V13*get_Fruit_List{26A9} 57>28
+57r28 Tree{13R9}
+59V13*get_Size_Average{16F12} 59>30
+59r30 t{13R9}
+60V13*get_Firmness_Average{16F12} 60>34
+60r34 t{13R9}
+61V13*get_Taste_Average{16F12} 61>31
+61r31 t{13R9}
+63V13*get_Size_Standard_Deviation{18F12} 63>41
+63r41 t{13R9}
+64V13*get_Firmness_Standard_Deviation{18F12} 64>45
+64r45 t{13R9}
+65V13*get_Taste_Standard_Deviation{18F12} 65>42
+65r42 t{13R9}
+72N4 ID_Size 73r36
+78a7 ID{14A9}
+79i7 Fruit_Count{27I12}
+80a7 Fruit_List{26A9}
+81f7 Average{16F12}
+82f7 StdDev{18F12}
+

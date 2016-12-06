@@ -1,0 +1,56 @@
+V "GNAT Lib v2015"
+M P W=b
+A -gnatwu
+A -gnat05
+A -mtune=generic
+A -march=pentiumpro
+P ZX
+
+RN
+RV NO_IO
+RV NO_DEFAULT_INITIALIZATION
+RV SPARK_05
+
+U test%b		test.adb		a9cf4845 NE OO SU
+W ada%s			ada.ads			ada.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W wordpkg%s		wordpkg.adb		wordpkg.ali
+
+D ada.ads		20150518132148 3ffc8e18 ada%s
+D a-except.ads		20150518132148 5250cb69 ada.exceptions%s
+D a-ioexce.ads		20150518132148 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20150518132148 119b8fb3 ada.streams%s
+D a-tags.ads		20150518132148 dc4d0634 ada.tags%s
+D a-textio.ads		20150518132148 386df5d4 ada.text_io%s
+D a-unccon.ads		20150518132148 f9eb8f06 ada.unchecked_conversion%s
+D interfac.ads		20150518132148 6033a23f interfaces%s
+D i-cstrea.ads		20150518132148 e53d8b8e interfaces.c_streams%s
+D system.ads		20150518132150 f4ce8c3a system%s
+D s-crtl.ads		20150518132148 0ebbdb71 system.crtl%s
+D s-exctab.ads		20150518132148 54135002 system.exception_table%s
+D s-ficobl.ads		20150518132148 078245e4 system.file_control_block%s
+D s-parame.ads		20150518132150 7e2a0d7f system.parameters%s
+D s-soflin.ads		20150518132150 aa763b52 system.soft_links%s
+D s-stache.ads		20150518132150 a37c21ec system.stack_checking%s
+D s-stalib.ads		20150518132150 fa0a3617 system.standard_library%s
+D s-stoele.ads		20150518132150 2dc34a04 system.storage_elements%s
+D s-traent.ads		20150518132150 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20150518132150 9d58a4c0 system.unsigned_types%s
+D s-wchcon.ads		20150518132150 1b7d22d2 system.wch_con%s
+D test.adb		20151022051226 730d0f49 test%b
+D wordpkg.ads		20151022045034 e2afb2d8 wordpkg%s
+X 1 ada.ads
+16K9*Ada 19e8 22|1r6 1r23
+X 6 a-textio.ads
+49K13*Text_IO 471e16 22|1w10 1r27
+166U14*New_Line 22|10s7
+184V13*End_Of_File{boolean} 22|7s14
+X 22 test.adb
+4U11*Test 4b11 12t4
+5r4 Current{23|8R10} 8m11 9r11
+X 23 wordpkg.ads
+6K9*WordPkg 22|2w6 2r19 23|51e12
+8R10*word 22|5r13 23|49e15
+37U15*Get 22|8s7
+41U15*Put 22|9s7
+

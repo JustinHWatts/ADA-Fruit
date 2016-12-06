@@ -1,0 +1,33 @@
+-- Name: Justin Watts
+-- Date: September 22, 2015
+-- Course: ITEC 320 Procedural Analysis and Design
+
+-- Purpose: This program processes a set of three softball teams and their runs
+--    scored over the course of one or more games of nine innings.
+-- Input is a set of three team names followed by the order in which the teams
+--    play and the runs scored in each inning respective to the team playing.
+-- Each set begins with a positive integer which specifies the number of
+--    datasets being processed.
+-- Each set is made up of three team names, two lines showing the order in
+--    which the teams play represented by the first three characters of each
+--    line, and two lines corresponding to the order displayed above showing
+--    the total runs scored by the teams playing in those innings.
+-- Each dataset ends at the input of "000".
+-- Output consists of the total scores of each team playing followed by the
+--    name of each respective team. The total runs scored altogether are
+--    displayed below.
+-- Sample input:
+--    1
+--    name 1
+--    names 2
+--    name 3
+--    123
+--    231
+--    0 1 0 2 2 3 1 2 1
+--    3 1 2 1 0 0 1 3 2
+--    000
+-- Corresponding output:
+--     7 name 1
+--    13 names 2
+--     5 name 3
+--    25 Total

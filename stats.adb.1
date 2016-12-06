@@ -1,0 +1,603 @@
+-- Name: Justin Watts
+-- Date: October 19, 2015
+-- Course: ITEC 320 Procedural Analysis and Design
+
+-- Purpose: This program processes a set of data describing fruit trees and the
+--    qualities of their fruit.
+
+-- Input consists of both file and standard input with file input detailing the
+--    trees along with their respective fruit and standard input being a
+--    command to return the analysis of the file's data.
+-- File input may consist of one to one thousand trees with zero to twenty
+--    fruit samples per tree.
+-- Each tree is detailed beginning with the word "TREE" followed by a seven
+--    letter or digit string. All corresponding fruit is detailed beginning
+--    with the word "FRUIT" followed by three words describing the qualities.
+-- Qualities:
+--    Size: small(1), midsize(2), amd large(3).
+--    Firmness: soft(1), firm(2), and hard(3).
+--    Taste: bland(1), sweet(2), and sour(3).
+-- Standard input consists of the commands "Trees", "Averages", "Fruits", and
+--    "Quit".
+
+-- Output is determined by standard input with "Trees" outputting just the tree
+--    ID number along with the number of fruit samples, "Averages" outputting
+--    the above output plus the average and standard deviation of each category
+--    for each tree, "Fruits" outputting the above output plus each fruit's
+--    characteristics, and "Quit" halting the program.
+-- Sample file input:
+--    tree 123456a
+--    fruit small hard sour
+--    fruit midsize firm bland
+--    fruit large hard sour
+--        tree
+--
+--             2234567
+--    tree 3234567
+--    tree 123456a
+--        fruit midsize hard bland
+--    tree 123456A
+--        fruit large firm sweet
+-- Sample standard input:
+--    trees
+--    fruits
+--    averages
+--    quit
+-- Corresponding output:
+--    TREE: 123456A   5
+--    TREE: 123456A   5:
+--        HARD      SOUR      SMALL
+--        FIRM      BLAND     MIDSIZE
+--        HARD      SOUR      LARGE
+--        HARD      BLAND     MIDSIZE
+--        FIRM      SWEET     LARGE
+--        2.6       2.0       2.2
+--        0.5       0.9       0.7
+--    TREE: 2234567   0:
+--        0.0       0.0       0.0
+--        0.0       0.0       0.0
+--    TREE: 3234567   0:
+--        0.0       0.0       0.0
+--        0.0       0.0       0.0
+--    TREE: 123456A   5:
+--        2.6       2.0       2.2
+--        0.5       0.9       0.7
+
+pragma Ada_2012;
+with WordPkg; use WordPkg;
+with Ada.Text_Io; use Ada.Text_Io;
+with Ada.Float_Text_Io; use Ada.Float_Text_Io;
+with Ada.Exceptions; use Ada.Exceptions;
+with Ada.Strings.Maps.Constants; use Ada.Strings.Maps.Constants;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
+
+---------------------------------------------------------------
+-- Purpose: Process a file of trees and their characteristics
+---------------------------------------------------------------
+
+procedure Stats is
+   type Sizes is array(Natural range <>) of Word;
+   type Firmnesses is array(Natural range <>) of Word;
+   type Tastes is array(Natural range <>) of Word;
+   type Avgs is array(1 .. 3) of Float;
+   type StdDevs is array(1 .. 3) of Float;
+   subtype MaxFruit is Integer range 1 .. 21;
+   subtype MaxTrees is Integer range 1 .. 1000;
+
+   type Tree is record                 -- Contains Tree characteristics
+      Id: Word;                        -- 7 letter or digit Id of a Tree
+      SampleCount: Natural;            -- Amount of fruit samples of a Tree
+      Size: Sizes(MaxFruit);           -- Array of fruit sizes for a Tree
+      Firmness: Firmnesses(MaxFruit);  -- Array of fruit firmnesses for a Tree
+      Taste: Tastes(MaxFruit);         -- Array of fruit tastes for a Tree
+   end record;
+
+   type TreeCollection is array(Natural range <>) of Tree;
+
+---------------------------------------------------------------
+-- Purpose: Determine if the current retreived Id for a Tree
+--    matches an existing one within the collection of trees.
+-- Parameters: IdNumber: the current retreived Id for a Tree
+--    to be checked against existing Id numbers
+-- Parameters: TreeList: collection of trees being checked
+-- Precondition: TreeList already contains at least one entry
+-- Postcondition: Returns a boolean value specifying whether
+--    or not an existing tree within the collection has the
+--    same Id number as the currently retreived one
+---------------------------------------------------------------
+
+   function MatchCheck(TreeList: TreeCollection; IdNumber: Word) return
+      Boolean is
+      Bool: Boolean;      -- Value determining whether or not duplicates exist
+   begin
+      Bool := False;
+
+      for I in 1 .. TreeList'Length loop
+         if TreeList(I).Id = IdNumber then
+            Bool := True;
+
+         end if;
+
+      end loop;
+
+      return Bool;
+
+   end MatchCheck;
+
+---------------------------------------------------------------
+-- Purpose: Calculates the average of each characteristic of a
+--    set of fruit samples from a specific tree.
+-- Parameters: CurrentTree: the current tree from which the
+--    fruit characteristic averages are derived
+-- Postcondition: Returns an array of averages for each
+--    characteristic of a set of fruit samples from a specific
+--    tree
+---------------------------------------------------------------
+
+   function Average(CurrentTree: Tree) return Avgs is
+      SizeCount, FirmCount, TasteCount: Float := 0.0; -- Total combined counts
+      SoftCheck, FirmCheck, HardCheck: Word;          -- Checks for qualities
+      BlandCheck, SweetCheck, SourCheck: Word;        -- Checks for qualities
+      SmallCheck, MidsizeCheck, LargeCheck: Word;     -- Checks for qualities
+      AvgArray: Avgs := (others => 0.0);              -- Averages of qualities
+   begin
+      SoftCheck := New_Word("SOFT");
+      FirmCheck := New_Word("FIRM");
+      HardCheck := New_Word("HARD");
+
+      BlandCheck := New_Word("BLAND");
+      SweetCheck := New_Word("SWEET");
+      SourCheck := New_Word("SOUR");
+
+      SmallCheck := New_Word("SMALL");
+      MidsizeCheck := New_Word("MIDSIZE");
+      LargeCheck := New_Word("LARGE");
+
+      for N in 1 .. CurrentTree.SampleCount loop
+         if CurrentTree.Firmness(N) = SoftCheck then
+            FirmCount := FirmCount + 1.0;
+         elsif CurrentTree.Firmness(N) = FirmCheck then
+            FirmCount := FirmCount + 2.0;
+         elsif CurrentTree.Firmness(N) = HardCheck then
+            FirmCount := FirmCount + 3.0;
+         end if;
+
+         if CurrentTree.Taste(N) = BlandCheck then
+            TasteCount := TasteCount + 1.0;
+         elsif CurrentTree.Taste(N) = SweetCheck then
+            TasteCount := TasteCount + 2.0;
+         elsif CurrentTree.Taste(N) = SourCheck then
+            TasteCount := TasteCount + 3.0;
+         end if;
+
+         if CurrentTree.Size(N) = SmallCheck then
+            SizeCount := SizeCount + 1.0;
+         elsif CurrentTree.Size(N) = MidsizeCheck then
+            SizeCount := SizeCount + 2.0;
+         elsif CurrentTree.Size(N) = LargeCheck then
+            SizeCount := SizeCount + 3.0;
+         end if;
+
+      end loop;
+
+      if CurrentTree.SampleCount > 0 then
+         AvgArray(1) := FirmCount / Float(CurrentTree.SampleCount);
+         AvgArray(2) := TasteCount / Float(CurrentTree.SampleCount);
+         AvgArray(3) := SizeCount / Float(CurrentTree.SampleCount);
+      end if;
+
+      return AvgArray;
+
+   end Average;
+
+---------------------------------------------------------------
+-- Purpose: Calculates the standard deviation of each
+--    characteristic of a set of fruit samples from a specific
+--    tree.
+-- Parameters: AvgArray: means of each type of characteristic
+--    of a specific tree
+-- Parameters: CurrentTree: the current tree from which the
+--    fruit characteristic standard deviations are derived
+-- Postcondition: Returns an array of standard deviations for
+--    each characteristic of a set of fruit samples from a
+--    specific tree
+---------------------------------------------------------------
+
+   function StandardDev(AvgArray: Avgs; CurrentTree: Tree) return StdDevs is
+      SoftCheck, FirmCheck, HardCheck: Word;         -- Checks for qualities
+      BlandCheck, SweetCheck, SourCheck: Word;       -- Checks for qualities
+      SmallCheck, MidsizeCheck, LargeCheck: Word;    -- Checks for qualities
+      FirmSqDifs: array(1 .. CurrentTree.SampleCount) of Float;  -- Square difs
+      TasteSqDifs: array(1 .. CurrentTree.SampleCount) of Float; -- Square difs
+      SizeSqDifs: array(1 .. CurrentTree.SampleCount) of Float;  -- Square difs
+      TotalFirmSqDifs: Float := 0.0;                 -- Total of square difs
+      TotalTasteSqDifs: Float := 0.0;                -- Total of square difs
+      TotalSizeSqDifs: Float := 0.0;                 -- Total of square difs
+      StdDevArray: StdDevs := (others => 0.0);       -- Stnd dev of qualities
+   begin
+      FirmSqDifs := (others => 0.0);
+      TasteSqDifs := (others => 0.0);
+      SizeSqDifs := (others => 0.0);
+
+      SoftCheck := New_Word("SOFT");
+      FirmCheck := New_Word("FIRM");
+      HardCheck := New_Word("HARD");
+
+      BlandCheck := New_Word("BLAND");
+      SweetCheck := New_Word("SWEET");
+      SourCheck := New_Word("SOUR");
+
+      SmallCheck := New_Word("SMALL");
+      MidsizeCheck := New_Word("MIDSIZE");
+      LargeCheck := New_Word("LARGE");
+
+      for N in 1 .. CurrentTree.SampleCount loop
+         if CurrentTree.Firmness(N) = SoftCheck then
+            FirmSqDifs(N) := 1.0;
+         elsif CurrentTree.Firmness(N) = FirmCheck then
+            FirmSqDifs(N) := 2.0;
+         elsif CurrentTree.Firmness(N) = HardCheck then
+            FirmSqDifs(N) := 3.0;
+         end if;
+
+         if CurrentTree.Taste(N) = BlandCheck then
+            TasteSqDifs(N) := 1.0;
+         elsif CurrentTree.Taste(N) = SweetCheck then
+            TasteSqDifs(N) := 2.0;
+         elsif CurrentTree.Taste(N) = SourCheck then
+            TasteSqDifs(N) := 3.0;
+         end if;
+
+         if CurrentTree.Size(N) = SmallCheck then
+            SizeSqDifs(N) := 1.0;
+         elsif CurrentTree.Size(N) = MidsizeCheck then
+            SizeSqDifs(N) := 2.0;
+         elsif CurrentTree.Size(N) = LargeCheck then
+            SizeSqDifs(N) := 3.0;
+         end if;
+
+      end loop;
+
+      for N in 1 .. CurrentTree.SampleCount loop
+         FirmSqDifs(N) := FirmSqDifs(N) - AvgArray(1);
+         FirmSqDifs(N) := FirmSqDifs(N) * FirmSqDifs(N);
+
+         TasteSqDifs(N) := TasteSqDifs(N) - AvgArray(2);
+         TasteSqDifs(N) := TasteSqDifs(N) * TasteSqDifs(N);
+
+         SizeSqDifs(N) := SizeSqDifs(N) - AvgArray(3);
+         SizeSqDifs(N) := SizeSqDifs(N) * SizeSqDifs(N);
+
+      end loop;
+
+      if CurrentTree.SampleCount > 0 then
+         for N in 1 .. CurrentTree.SampleCount loop
+            TotalFirmSqDifs := TotalFirmSqDifs + FirmSqDifs(N);
+            TotalTasteSqDifs := TotalTasteSqDifs + TasteSqDifs(N);
+            TotalSizeSqDifs := TotalSizeSqDifs + SizeSqDifs(N);
+
+         end loop;
+
+         StdDevArray(1) := TotalFirmSqDifs / Float(CurrentTree.SampleCount);
+         StdDevArray(2) := TotalTasteSqDifs / Float(CurrentTree.SampleCount);
+         StdDevArray(3) := TotalSizeSqDifs / Float(CurrentTree.SampleCount);
+
+         StdDevArray(1) := Sqrt(StdDevArray(1));
+         StdDevArray(2) := Sqrt(StdDevArray(2));
+         StdDevArray(3) := Sqrt(StdDevArray(3));
+
+      end if;
+
+      return StdDevArray;
+
+   end StandardDev;
+
+---------------------------------------------------------------
+-- Purpose: Displays each tree in the TreeList.
+-- Parameters: TreeList: collection of trees from which to
+--    print data
+-- Precondition: TreeList has at least one entry
+---------------------------------------------------------------
+
+   procedure TreeDisplay(TreeList: TreeCollection) is
+
+   begin
+      for I in 1 .. TreeList'Length loop
+         Put("TREE: ");
+         Put(TreeList(I).Id);
+         Put("  ");
+         Put(Natural'Image(TreeList(I).SampleCount));
+         New_Line;
+      end loop;
+
+   end TreeDisplay;
+
+---------------------------------------------------------------
+-- Purpose: Displays the fruit characteristics, averages, and
+--    standard deviations of each tree in the TreeList.
+-- Parameters: TreeList: collection of trees from which to
+--    print data
+-- Precondition: TreeList has at least one entry
+---------------------------------------------------------------
+
+   procedure FruitDisplay(TreeList: TreeCollection) is
+      AvgArray: Avgs;            -- Average of qualities
+      StdDevArray: StdDevs;      -- Standard deviation of qualities
+   begin
+      for I in 1 .. TreeList'Length loop
+         Put("TREE: ");
+         Put(TreeList(I).Id);
+         Put("  ");
+         Put(Natural'Image(TreeList(I).SampleCount));
+         Put(":");
+         New_Line;
+
+         for N in 1 .. TreeList(I).SampleCount loop
+            Put("    ");
+            Put(TreeList(I).Firmness(N));
+
+            Put("      ");
+            Put(TreeList(I).Taste(N));
+            if Length(TreeList(I).Taste(N)) = 4 then
+               Put("      ");
+            else
+               Put("     ");
+            end if;
+
+            Put(TreeList(I).Size(N));
+            New_Line;
+
+         end loop;
+
+         AvgArray := Average(TreeList(I));
+         for N in 1 .. 3 loop
+            Put(AvgArray(N), fore => 5, Aft => 1, Exp => 0);
+            Put("   ");
+         end loop;
+
+         New_Line;
+
+         StdDevArray := StandardDev(AvgArray, TreeList(I));
+         for N in 1 .. 3 loop
+            Put(StdDevArray(N), fore => 5, Aft => 1, Exp => 0);
+            Put("   ");
+         end loop;
+
+         New_Line;
+
+      end loop;
+
+   end FruitDisplay;
+
+---------------------------------------------------------------
+-- Purpose: Displays the averages and standard deviations of
+--    each tree in the TreeList.
+-- Parameters: TreeList: collection of trees from which to
+--    print data
+-- Precondition: TreeList has at least one entry
+---------------------------------------------------------------
+
+   procedure AverageDisplay(TreeList: TreeCollection) is
+      AvgArray: Avgs;            -- Average of qualities
+      StdDevArray: StdDevs;      -- Standard deviation of qualities
+   begin
+      for I in 1 .. TreeList'Length loop
+         Put("TREE: ");
+         Put(TreeList(I).Id);
+         Put("  ");
+         Put(Natural'Image(TreeList(I).SampleCount));
+         New_Line;
+
+         AvgArray := Average(TreeList(I));
+         for N in 1 .. 3 loop
+            Put(AvgArray(N), fore => 5, Aft => 1, Exp => 0);
+            Put("   ");
+         end loop;
+
+         New_Line;
+
+         StdDevArray := StandardDev(AvgArray, TreeList(I));
+         for N in 1 .. 3 loop
+            Put(StdDevArray(N), fore => 5, Aft => 1, Exp => 0);
+            Put("   ");
+         end loop;
+
+         New_Line;
+
+      end loop;
+
+   end AverageDisplay;
+
+---------------------------------------------------------------
+-- Purpose: Handles a loop which allows for standard user
+--    input until user prompts program to quit.
+-- Parameters: TreeList: collection of trees to receive data
+--    about through user commands
+-- Precondition: TreeList has at least one entry
+---------------------------------------------------------------
+
+   procedure RunInputLoop(TreeList: TreeCollection) is
+      Current: String(1 .. 10);         -- String user command
+      Len: Natural;                     -- Length of Current
+   begin
+      Get_Line(Current, Len);
+      Translate(Current, Upper_Case_Map);
+
+      while Current(1 .. 4) /= "QUIT" loop
+
+         if Current(1 .. 5) = "TREES" then
+            TreeDisplay(TreeList);
+         elsif Current(1 .. 6) = "FRUITS" then
+            FruitDisplay(TreeList);
+         elsif Current(1 .. 8) = "AVERAGES" then
+            AverageDisplay(TreeList);
+
+         end if;
+
+         Current := (others => ' ');
+         Get_Line(Current, Len);
+         Translate(Current, Upper_Case_Map);
+
+      end loop;
+
+   exception
+      when wordtoolong =>
+         Put("Your word is too long.");
+         New_Line;
+
+   end RunInputLoop;
+
+---------------------------------------------------------------
+-- Purpose: Reads in a file composed of data on trees and
+--    their respective fruits. Stores this data as a
+--    collection of Tree records.
+-- Postcondition: Returns an array of Tree records
+---------------------------------------------------------------
+
+   function ReadInputFile return TreeCollection is
+      Current: Word;                  -- Value from file
+      TreeCheck, FruitCheck: Word;    -- Checks for input value
+      Id, OldTreeId: Word;            -- Tree Id sequence
+      Done: Boolean;                  -- Determines if file is done being read
+      TreeCount, FruitCount: Natural; -- Amount of trees and their fruit
+      UseOldTree: Boolean;            -- Determines if duplicate tree exists
+      TreeList: TreeCollection(MaxTrees); -- List of Trees input from file
+      Test1: Ada.Text_Io.File_Type;   -- Input file being read
+      Name: String := "test1.txt";    -- Name of input file
+      Invalid_Data: Exception;
+   begin
+      Ada.Text_Io.Open (File => Test1, Mode => Ada.Text_Io.In_File, Name => Name);
+
+      UseOldTree := False;
+      Done := False;
+      TreeCount := 0;
+      TreeCheck := New_Word("TREE");
+      FruitCheck := New_Word("FRUIT");
+      Get(Test1, Current);
+
+      if Current = FruitCheck then
+         Put_Line("File must designate a tree before adding fruit samples");
+         raise Invalid_Data;
+      elsif Current /= TreeCheck then
+         Put_Line("File must begin with tree");
+         raise Invalid_Data;
+      end if;
+
+      while not Done loop
+
+         if Current = TreeCheck then
+            FruitCount := 0;
+            UseOldTree := False;
+
+            Get(Test1, Current);
+            Id := Current;
+
+            if TreeCount = 0 then
+               TreeList(1).Id := Id;
+               TreeCount := TreeCount + 1;
+
+            elsif MatchCheck(TreeList, Id) then
+               UseOldTree := True;
+               OldTreeId := Id;
+
+            else
+               TreeCount := TreeCount + 1;
+               TreeList(TreeCount).Id := Id;
+
+            end if;
+
+         elsif Current = FruitCheck then
+            if UseOldTree then
+
+               for I in 1 .. TreeList'Length loop
+                  if TreeList(I).Id = OldTreeId then
+                     TreeList(I).SampleCount := TreeList(I).SampleCount + 1;
+                     FruitCount := TreeList(I).SampleCount;
+
+                     Get(Test1, Current);
+                     TreeList(I).Size(FruitCount) := Current;
+
+                     Get(Test1, Current);
+                     TreeList(I).Firmness(FruitCount) := Current;
+
+                     Get(Test1, Current);
+                     TreeList(I).Taste(FruitCount) := Current;
+
+                  end if;
+
+               end loop;
+
+
+            elsif FruitCount = 0 then
+               FruitCount := 1;
+               TreeList(TreeCount).SampleCount := 1;
+
+               Get(Test1, Current);
+               TreeList(TreeCount).Size(1) := Current;
+
+               Get(Test1, Current);
+               TreeList(TreeCount).Firmness(1) := Current;
+
+               Get(Test1, Current);
+               TreeList(TreeCount).Taste(1) := Current;
+
+            else
+               TreeList(TreeCount).SampleCount :=
+                  TreeList(TreeCount).SampleCount + 1;
+               FruitCount := FruitCount + 1;
+
+               Get(Test1, Current);
+               TreeList(TreeCount).Size(FruitCount) := Current;
+
+               Get(Test1, Current);
+               TreeList(TreeCount).Firmness(FruitCount) := Current;
+
+               Get(Test1, Current);
+               TreeList(TreeCount).Taste(FruitCount) := Current;
+
+            end if;
+
+         end if;
+
+         Get(Test1, Current);
+
+         if Length(Current) = 0 then
+            Done := True;
+
+            declare
+               NewTreeList: TreeCollection(1 .. TreeCount); -- Formats trees
+            begin
+               for I in 1 .. TreeCount loop
+                  NewTreeList(I) := TreeList(I);
+
+               end loop;
+
+               return NewTreeList;
+
+            end;
+
+         end if;
+
+      end loop;
+
+      exception
+         when Invalid_Data =>
+            Put ("Program halted because of invalid data.");
+         when Data_Error =>
+            Put ("Invalid String!");
+         when End_Error =>
+            Put_Line ("Premature end of file!");
+         when E: others =>
+            Put ("Something unexpected happened!"); New_Line;
+            Put (Exception_Name(E));
+            Put (Exception_Message(E));
+
+   end ReadInputFile;
+
+
+   TreeList: TreeCollection := ReadInputFile;  -- List of Trees from input file
+begin
+   RunInputLoop(TreeList);
+
+end Stats;

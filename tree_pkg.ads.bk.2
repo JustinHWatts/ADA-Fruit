@@ -1,0 +1,83 @@
+-- pragma Ada_2012;
+-- pragma Assertion_Policy(Check);  -- 2012: Turn on precondition checking
+with Fruit_Pkg;
+generic
+   Max_Tree_Count: Positive;
+   Max_Fruit_Count: Positive;
+package Tree_Pkg is
+   -- Exceptions:
+   Invalid_Index, Invalid_ID: exception;
+
+   -- Types for Trees
+   type Tree_Type is private;
+   type ID_Type is private;
+
+   subtype Average_Type is Float range 0.0 .. 3.0;
+   -- with dynamic_predicate => Average_Type = 0.0 or Average_Type in 1.0 .. 3.0; -- 2012
+   subtype Standard_Deviation_Type is Float range 0.0 .. 1.0;
+
+   -- Types for Tree Lists
+   type Tree_List_Type is private;
+   subtype Tree_Count_Type is Natural range 0 .. Max_Tree_Count;
+   subtype Tree_Index_Type is Natural range 1 .. Max_Tree_Count;
+
+   -- Types for Fruit Lists
+   type Fruit_List_Type is private;
+   subtype Fruit_Count_Type is Natural range 0 .. Max_Fruit_Count;
+   subtype Fruit_Index_Type is Natural range 1 .. Max_Fruit_Count;
+
+   -----------------------------------------------------------------------
+   -- Routines for the Tree Lists
+   -----------------------------------------------------------------------
+   function Is_Valid(List: in Tree_List_Type; Id: ID_Type) return Boolean;
+   -- Determine whether  an id matches the id of a tree
+   function Is_Valid(List: in Tree_List_Type; Index: Tree_Index_Type) return Boolean;
+   -- Determine whether  a tree exists with the given index number
+
+   function Get_Tree_Count(List: in Tree_List_Type) return Tree_Count_Type;
+   -- Returns number of trees in list
+
+   function Get_Tree(List: in Tree_List_Type; Index: Tree_Index_Type) return Tree_Type;
+   -- with pre => is_valid(list, index);   -- 2012
+   -- Returns tree with given index
+
+   function Get_Tree(List: in Tree_List_Type; Id: ID_Type) return Tree_Type;
+   -- with pre => is_valid(list, id);
+   -- Returns tree with given index
+
+   -----------------------------------------------------------------------
+
+
+   -----------------------------------------------------------------------
+   -- Routines for Trees
+   -----------------------------------------------------------------------
+   function get_ID(t: Tree_Type) return ID_Type;
+   function get_Fruit_Count(t: Tree_Type) return Fruit_Count_Type;
+   function get_Fruit_List(Tree: in Tree_Type) return Fruit_List_Type;
+
+   function get_Size_Average(t: Tree_Type) return Average_Type;
+   function get_Firmness_Average(t: Tree_Type) return Average_Type;
+   function get_Taste_Average(t: Tree_Type) return Average_Type;
+
+   function get_Size_Standard_Deviation(t: Tree_Type) return Standard_Deviation_Type;
+   function get_Firmness_Standard_Deviation(t: Tree_Type) return Standard_Deviation_Type;
+   function get_Taste_Standard_Deviation(t: Tree_Type) return Standard_Deviation_Type;
+
+   -----------------------------------------------------------------------
+
+
+
+private
+   ID_Size: constant := 7;
+   type ID_Type is new String(1 .. ID_Size);
+
+   type Fruit_List_Type is array(Fruit_Index_Type) of Fruit_Type;
+
+   type Tree_Type is record
+      ID: ID_Type;
+      Fruit_Count: Fruit_Count_Type;
+      Fruit_List: Fruit_List_Type;
+   end record;
+
+   type Tree_List_Type is array(Tree_Index_Type) of Tree_Type;
+end Tree_Pkg;

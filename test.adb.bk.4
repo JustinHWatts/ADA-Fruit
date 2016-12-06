@@ -1,0 +1,11 @@
+with Ada.Text_Io; use Ada.Text_Io;
+
+procedure Test is
+   Current: String(1 .. 10);
+   Len: Natural;
+begin
+   while not End_Of_File loop
+      Get_Line(Current, Len);
+      Put_Line(1 .. Len);
+   end loop;
+end;

@@ -1,0 +1,29 @@
+with Ada.Text_IO; use Ada.Text_IO;
+
+generic
+package Tree_Pkg.Tree_IO is
+   -- Exceptions:
+   Too_Many_Trees, Too_Many_Fruits: Exception;
+   Invalid_Keyword, Fruit_First: Exception;
+
+   -- Output information on a single tree
+   procedure put_ID_Type_and_count(t: Tree_Type);
+   procedure put_ID_Type_and_count_and_Fruits_and_Averages(t: Tree_Type);
+   procedure put_ID_Type_and_count_And_Averages(t: Tree_Type);
+
+   -- Output information on all trees
+   procedure put_all_ID_Type_and_count(tl: Tree_List_Type);
+   procedure put_all_ID_Type_and_count_and_Fruits_and_Averages(tl: Tree_List_Type);
+   procedure put_all_ID_Type_and_count_And_Averages(tl: Tree_List_Type);
+
+   -- Read all tree data from a file
+   procedure get(file: File_Type; list: in out Tree_List_Type);
+   procedure get(list: in out Tree_List_Type);
+
+   -- Skip white space and then read an ID number
+   procedure get(id: out ID_Type);
+   procedure get(file: File_Type; id: out ID_Type);
+
+   -- Output an ID
+   procedure put(id: ID_Type);
+end Tree_Pkg.Tree_IO;
